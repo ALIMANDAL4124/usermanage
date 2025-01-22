@@ -50,7 +50,7 @@ const TableComponent = () => {
   }
 
   return (
-    <div className='table-container'>
+    <div className="table-container">
       <table>
         <thead>
           <tr>
@@ -66,7 +66,7 @@ const TableComponent = () => {
                   value={row.column1}
                   onChange={e => handleColumn1Change(row.id, e.target.value)}
                 >
-                  <option value=''>Select an option</option>
+                  <option value="">Select an option</option>
                   {options1.map(option => (
                     <option key={option.value} value={option.value}>
                       {option.label}
@@ -93,12 +93,12 @@ const TableComponent = () => {
                       {option.label}
                     </option>
                   ))}
-                  <option value='add-new'>Add new option</option>
+                  <option value="add-new">Add new option</option>
                 </select>
                 {row.column2.includes('add-new') && (
                   <input
-                    type='text'
-                    placeholder='Enter new option'
+                    type="text"
+                    placeholder="Enter new option"
                     onBlur={e => handleAddOption2(e.target.value)}
                   />
                 )}
@@ -107,7 +107,7 @@ const TableComponent = () => {
           ))}
         </tbody>
       </table>
-      <button type='button' onClick={handleAddRow}>
+      <button type="button" onClick={handleAddRow}>
         Add new row
       </button>
     </div>
