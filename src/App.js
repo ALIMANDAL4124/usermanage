@@ -1,65 +1,87 @@
-import {useState, useEffect} from 'react'
-import axios from 'axios'
-import UserList from './components/UserList'
-import UserForm from './components/UserForm'
-import ErrorBoundary from './components/ErrorBoundary'
+import {useState} from 'react'
+import CountryList from './components/CountryList'
 
 function App() {
-  const [users, setUsers] = useState([])
-  const [error, setError] = useState(null)
+  const [countries, setCountries] = useState([])
+  const [states, setStates] = useState({})
+  const [cities, setCities] = useState({})
 
-  useEffect(() => {
-    axios
-      .get('https://jsonplaceholder.typicode.com/users')
-      .then(response => {
-        setUsers(response.data)
-      })
-      .catch(brror => {
-        setError(error.message)
-      })
-  }, [])
-
-  const handleAddUser = user => {
-    axios
-      .post('https://jsonplaceholder.typicode.com/users', user)
-      .then(response => {
-        setUsers([...users, response.data])
-      })
-      .catch(brror => {
-        setError(error.message)
-      })
+  const addCountry = countryName => {
+    const newCountry = {name: countryName, states: []}
+    setCountries([...countries, newCountry])
   }
 
-  const handleEditUser = user => {
-    axios
-      .put(`https://jsonplaceholder.typicode.com/users/${user.id}`, user)
-      .then(response => {
-        setUsers(users.map(u => (u.id === user.id ? response.data : u)))
-      })
-      .catch(brror => {
-        setError(error.message)
-      })
+  const addState = (countryIndex, stateName) => {
+    const newStates = {...states}
+    newStates[countryIndex] = newStates[countryIndex] || []
+    newStates[countryIndex].push({name: stateName, cities: []})
+    setStates(newStates)
   }
 
-  const handleDeleteUser = userId => {
-    axios
-      .delete(`https://jsonplaceholder.typicode.com/users/${userId}`)
-      .then(() => {
-        setUsers(users.filter(u => u.id !== userId))
-      })
-      .catch(brror => {
-        setError(error.message)
-      })
+  const addCity = (countryIndex, stateIndex, cityName) => {
+    const newCities = {...cities}
+    newCities[countryIndex] = newCities[countryIndex] || []
+    newCities[countryIndex][stateIndex] =
+      newCities[countryIndex][stateIndex] || []
+    newCities[countryIndex][stateIndex].push(cityName)
+    setCities(newCities)
+  }
+
+  const editCountry = (index, countryName) => {
+    const newCountries = [...countries]
+    newCountries[index].name = countryName
+    setCountries(newCountries)
+  }
+
+  const editState = (countryIndex, stateIndex, stateName) => {
+    const newStates = {...states}
+    newStates[countryIndex][stateIndex].name = stateName
+    setStates(newStates)
+  }
+
+  const editCity = (countryIndex, stateIndex, cityIndex, cityName) => {
+    const newCities = {...cities}
+    newCities[countryIndex][stateIndex][cityIndex] = cityName
+    setCities(newCities)
+  }
+
+  const deleteCountry = index => {
+    const newCountries = [...countries]
+    newCountries.splice(index, 1)
+    setCountries(newCountries)
+  }
+
+  const deleteState = (countryIndex, stateIndex) => {
+    const newStates = {...states}
+    newStates[countryIndex].splice(stateIndex, 1)
+    setStates(newStates)
+  }
+
+  const deleteCity = (countryIndex, stateIndex, cityIndex) => {
+    const newCities = {...cities}
+    newCities[countryIndex][stateIndex].splice(cityIndex, 1)
+    setCities(newCities)
   }
 
   return (
     <div>
-      <h1>User Management App</h1>
-      <ErrorBoundary>
-        <UserList users={users} onDelete={handleDeleteUser} />
-        <UserForm onAdd={handleAddUser} onEdit={handleEditUser} />
-      </ErrorBoundary>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      <h1>Country Management</h1>
+      <button onClick={() => addCountry(prompt('Enter country name'))}>
+        Add Country
+      </button>
+      <CountryList
+        countries={countries}
+        states={states}
+        cities={cities}
+        addState={addState}
+        addCity={addCity}
+        editCountry={editCountry}
+        editState={editState}
+        editCity={editCity}
+        deleteCountry={deleteCountry}
+        deleteState={deleteState}
+        deleteCity={deleteCity}
+      />
     </div>
   )
 }
